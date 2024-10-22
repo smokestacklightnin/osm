@@ -1,6 +1,7 @@
 name: Docker Build Workflow
 
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       ecr_repo:
