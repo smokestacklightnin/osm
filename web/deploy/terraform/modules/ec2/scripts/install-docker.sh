@@ -13,3 +13,6 @@ echo \
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin awscli
 usermod -aG docker ubuntu
+
+# TODO: This line needs to be parametrized
+runuser -l ubuntu -c 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 390844787521.dkr.ecr.us-east-1.amazonaws.com'
