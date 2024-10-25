@@ -1,0 +1,79 @@
+name: Docker Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      deployment:
+        required: true
+        type: string
+        # I would like to get `choice` working
+        # type: choice
+        # options:
+        # - api
+        # - dashboard
+      # docker_target:
+      #   description: 'Docker target'
+      #   type: string
+      #   required: true
+      aws_region:
+        description: 'AWS region'
+        type: string
+        required: false
+        default: 'us-east-1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    steps:
+      - name: Get version tag
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::390844787521:role/github-actions-role-shared
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        
+      - name: Compute image tag
+        id: compute-image-tag
+        run: |
+          short_sha=$(git rev-parse --short ${{ github.sha }})
+          # echo "tag=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr_repo }}:$short_sha" >> $GITHUB_OUTPUT
+          echo "tag=${{ steps.login-ecr.outputs.registry }}/${{ inputs.deployment }}-shared:$short_sha" >> $GITHUB_OUTPUT
+          echo "short_sha=$short_sha" >> $GITHUB_OUTPUT
+      - name: Build base docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # provenance: false
+          push: true
+          file: Dockerfile.base
+          tags: localhost:5000/osm/osm_base
+          
+      - name: Build and push Docker image
+        # only build if the image tag doesn't exist
+        # if: steps.check-image-tag.outputs.found_tag == 1
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          provenance: false
+          push: true
+          tags: ${{ steps.compute-image-tag.outputs.tag }}
+          file: web/${{ inputs.deployment }}/Dockerfile
+          build-args: |
+            BASE_IMAGE=localhost:5000/osm/osm_base
+          # target: ${{ inputs.docker_target }}

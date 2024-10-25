@@ -7,13 +7,13 @@ variable "state_storage_region" {
 variable "state_bucket_name" {
   description = "The name of the S3 bucket to store Terraform state."
   type        = string
-  default     = "osm-terraform-state-storage"
+  default     = "osm-terraform-state-storage-test"
 }
 
 variable "state_table_name" {
   description = "The name of the DynamoDB table for Terraform state locks."
   type        = string
-  default     = "terraform-state-locks"
+  default     = "terraform-state-locks-test"
 }
 
 variable "state_backend_key" {

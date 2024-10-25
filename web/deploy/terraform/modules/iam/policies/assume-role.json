@@ -4,13 +4,14 @@
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::123456123456:oidc-provider/token.actions.githubusercontent.com"
+                "Federated": "arn:aws:iam::390844787521:oidc-provider/token.actions.githubusercontent.com"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
                 "StringLike": {
                     "token.actions.githubusercontent.com:sub": [
-                        "repo:nimh-dsst/osm:*"
+                        "repo:nimh-dsst/osm:*",
+			"repo:smokestacklightnin/osm:*"			
                     ]
                 },
                 "StringEquals": {
@@ -20,3 +21,4 @@
         }
     ]
 }
+ 
