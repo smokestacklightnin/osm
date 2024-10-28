@@ -74,8 +74,8 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
-          env
           ssh ${DEV_ENVIRONMENT} \
+          env \
           DUMMY=dummy \
           MONGODB_URI="${MONGODB_URI}" \
           HOST_URI="${HOST_URI}" \
