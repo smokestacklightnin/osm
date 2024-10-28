@@ -74,7 +74,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
-          ssh ${DEV_ENVIRONMENT} "DUMMY=dummy MONGODB_URI=${MONGODB_URI} HOST_URI=${HOST_URI} RELEASE_TAG=${RELEASE_TAG} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} AWS_REGION=${AWS_REGION}" docker compose -f - up -d < ./web/deploy/docker-compose.yaml
+          ssh ${DEV_ENVIRONMENT} DUMMY=dummy MONGODB_URI=${MONGODB_URI} HOST_URI=${HOST_URI} RELEASE_TAG=${RELEASE_TAG} AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID} AWS_REGION=${AWS_REGION} docker compose -f - up -d < ./web/deploy/docker-compose.yaml
 
       - name: Prune Docker artifacts
         run: |
