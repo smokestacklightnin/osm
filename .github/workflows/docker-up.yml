@@ -76,6 +76,7 @@ jobs:
         run: |
           env
           ssh ${DEV_ENVIRONMENT} \
+          DUMMY=dummy \
           MONGODB_URI="${MONGODB_URI}" \
           HOST_URI="${HOST_URI}" \
           RELEASE_TAG="${RELEASE_TAG}" \
