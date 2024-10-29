@@ -2,8 +2,8 @@ name: Deploy OpenTofu
 
 on:
   push:
-    paths:
-      - 'web/deploy/terraform/**'
+    # paths:
+    #   - 'web/deploy/terraform/**'
 
 env:
   working_directory_parent: ./web/deploy/terraform
