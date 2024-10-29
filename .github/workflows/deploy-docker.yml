@@ -1,6 +1,7 @@
 name: Push to Docker image to AWS ECR and deploy to AWS EC2
 
 on:
+  push:
   workflow_dispatch:
   pull_request:
     branches:
@@ -18,14 +19,14 @@ jobs:
       matrix:
         deployment: ["api", "dashboard"]
     uses: ./.github/workflows/build-docker.yml
-    if: (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch')
+    if: (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch') || (github.event_name == 'push')
     secrets: inherit
     with:
       deployment: ${{ matrix.deployment }}
 
   docker-up:
     needs: [build-and-push]
-    if: ${{ always() && !cancelled() && needs.build-and-push.result == 'success' && ( (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch') )}}
+    if: ${{ always() && !cancelled() && needs.build-and-push.result == 'success' && ( (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch') || (github.event_name == 'push') )}}
     name: Deploy and run docker images on EC2
     uses: ./.github/workflows/docker-up.yml
     secrets: inherit
